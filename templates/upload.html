@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<style>
+    body{
+        font-family:Arial, sans-serif;
+        margin:0;
+        padding:0;
+        background-color:#f4f4f4;
+    }
+    #upload-form{
+        width:50%;
+        margin:20px auto;
+        padding:20px;
+        background:#fff;
+        border-radius:5px;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+    }
+    #plot{
+        width: 50% ;
+        margin: 20px auto;
+        height: 700px;
+        background-color:#f4f4f4;
+    }
+    h2{
+        text-align:center;
+        margin-bottom:20px;
+    }
+    #file{
+        margin-bottom:10px;
+        background-color : #f4f4f4;
+        text-align : center;
+    }
+    #file_type{
+        margin-bottom:10px;
+        background-color : #f4f4f4;
+        text-align : center;
+    }
+    #file_container, #type_container, #submit_btn_container{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+</style>
+<body>
+    <h2>File Upload</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <div id ="file_container">
+            <input id="file" type="file" name="file">
+        </div>
+        <div id = type_container>
+            <input  id="file_type" type="radio" name="file_type" value="TXT">TXT
+            <input  id="file_type" type="radio" name="file_type" value="CSV">CSV
+        </div>
+        <div id="submit_btn_container">
+            <input id="submit_btn" type="submit" value="Upload">
+        </div>
+    </form>
+    <div id="plot"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#upload-form').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '/files/upload',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        var trace1 = {
+                            x: response.x,
+                            y: response.y,
+                            z: response.z,
+                            mode: 'markers',
+                            marker: {
+                                size: 2 // 마커 크기 설정
+                            },
+                            type: 'scatter3d'
+                        };
+
+                        var data = [trace1];
+
+                        var layout = {
+                            title: '3D Scatter Plot',
+                            scene: {
+                                xaxis: { title: 'X Axis' },
+                                yaxis: { title: 'Y Axis' },
+                                zaxis: { title: 'Z Axis' }
+                            }
+                        };
+
+                        Plotly.newPlot('plot', data, layout);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

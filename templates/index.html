@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Plot</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #plot {
+        width: 100vw;
+        height: 100vh;
+    }
+</style>
+<body>
+    <div id="plot"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let data = JSON.parse(localStorage.getItem('plotData'));
+            if (data) {
+                let trace = {
+                    x: data.x,
+                    y: data.y,
+                    z: data.z,
+                    mode: 'markers',
+                    type: 'scatter3d',
+                    marker:{
+                        size:2
+                }
+                };
+                let layout = {
+                    title: "3D Plot"
+                };
+                Plotly.newPlot("plot", [trace], layout);
+            } else {
+                console.error("No plot data found.");
+            }
+        });
+    </script>
+</body>
+</html>
